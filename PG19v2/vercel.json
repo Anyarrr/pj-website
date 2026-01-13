@@ -1,6 +1,5 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
-  "framework": "nuxtjs",
-  "nodeVersion": "20.x"
+  "framework": "nuxtjs"
 }
