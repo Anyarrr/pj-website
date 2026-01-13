@@ -260,6 +260,7 @@ generate_compose() {
     # Different bot for TWA
     local telegram_bot="PG19CONNECTBOT"
     local telegram_bot_token="8239443842:AAGNXne9Z8oASGk56AZRB0LxdxbJCXn6XDI"
+    local openai_api_key="${OPENAI_API_KEY:-}"
     if [ "$portal" == "tgclient" ]; then
         telegram_bot="PG19WEBAPP_bot"
         telegram_bot_token="8504219719:AAE2rJupUBYkMIuJWlLHDXExFKuXx_QlOnc"
