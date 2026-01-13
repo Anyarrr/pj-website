@@ -2,12 +2,15 @@
   "name": "pg19-website",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "build": "npx nuxt build",
+    "dev": "npx nuxt dev",
+    "generate": "npx nuxt generate",
+    "preview": "npx nuxt preview",
+    "postinstall": "npx nuxt prepare"
   },
   "dependencies": {
     "@nuxtjs/color-mode": "^4.0.0",
