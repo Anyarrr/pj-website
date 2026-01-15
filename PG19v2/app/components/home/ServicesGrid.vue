@@ -107,9 +107,18 @@ const colorClasses: Record<string, { icon: string; glow: string; tag: string }> 
           </div>
 
           <!-- Title -->
-          <h3 class="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-primary transition-colors">
-            {{ service.title }}
-          </h3>
+          <div class="flex items-center gap-3 mb-3">
+            <h3 class="text-xl font-bold text-[var(--text-primary)] group-hover:text-primary transition-colors">
+              {{ service.title }}
+            </h3>
+            <span
+              v-if="service.comingSoon || service.href === '/mobile'"
+              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-accent/10 text-accent border border-accent/20"
+            >
+              <Icon name="heroicons:clock" class="w-3.5 h-3.5" />
+              Скоро
+            </span>
+          </div>
 
           <!-- Description -->
           <p class="text-[var(--text-muted)] mb-6 leading-relaxed">
