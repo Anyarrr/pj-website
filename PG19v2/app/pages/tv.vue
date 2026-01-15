@@ -37,7 +37,7 @@ const totalChannels = computed(() => {
             Цифровое <span class="text-gradient-secondary">телевидение</span>
           </h1>
           <p class="text-xl text-[var(--text-muted)] mb-4 opacity-0 animate-fade-in-up stagger-2">
-            <span class="text-5xl font-bold text-secondary">{{ totalChannels || 191 }}</span> <span class="text-[var(--text-secondary)]">канал в HD и 4K качестве</span>
+            <span class="text-5xl font-bold text-secondary">191</span> <span class="text-[var(--text-secondary)]">канал в HD и 4K качестве</span>
           </p>
           <p class="text-[var(--text-muted)] mb-10 opacity-0 animate-fade-in-up stagger-2">
             Включено в членский взнос без дополнительной платы
