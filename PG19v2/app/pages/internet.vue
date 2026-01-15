@@ -47,6 +47,7 @@ const equipment = computed(() => content.value?.features?.equipment?.router)
           <div class="inline-flex items-center justify-center w-20 h-20 glass-card rounded-3xl mb-8 opacity-0 animate-fade-in-up">
             <Icon name="heroicons:wifi" class="w-10 h-10 text-primary" />
           </div>
+          
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--text-primary)] mb-6 opacity-0 animate-fade-in-up stagger-1">
             Интернет <span class="text-gradient-primary">без ограничений</span>
           </h1>
@@ -54,13 +55,22 @@ const equipment = computed(() => content.value?.features?.equipment?.router)
             Мы не режем скорость — вы получаете всю полосу канала до 1000 Мбит/с.
             Никаких тарифных ограничений, скорость зависит только от вашего оборудования.
           </p>
-          <NuxtLink
-            to="/connect"
-            class="btn-primary inline-flex items-center gap-3 px-8 py-4 text-lg opacity-0 animate-fade-in-up stagger-3"
-          >
-            <span>Подключиться</span>
-            <Icon name="heroicons:arrow-right" class="w-5 h-5" />
-          </NuxtLink>
+          
+          <!-- Price and Button -->
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 opacity-0 animate-fade-in-up stagger-3">
+            <div class="inline-flex items-baseline gap-2">
+              <span class="text-3xl md:text-4xl font-bold text-gradient-primary">699</span>
+              <span class="text-base md:text-lg text-[var(--text-muted)]">₽/мес</span>
+            </div>
+            
+            <NuxtLink
+              to="/connect"
+              class="btn-primary inline-flex items-center gap-3 px-8 py-4 text-lg"
+            >
+              <span>Подключиться</span>
+              <Icon name="heroicons:arrow-right" class="w-5 h-5" />
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </section>
