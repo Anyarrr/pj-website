@@ -59,6 +59,7 @@ const equipment = computed(() => content.value?.features?.equipment?.router)
           <!-- Price and Button -->
           <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 opacity-0 animate-fade-in-up stagger-3">
             <div class="inline-flex items-baseline gap-2">
+              <span class="text-base md:text-lg text-[var(--text-muted)]">от</span>
               <span class="text-3xl md:text-4xl font-bold text-gradient-primary">699</span>
               <span class="text-base md:text-lg text-[var(--text-muted)]">₽/мес</span>
             </div>
