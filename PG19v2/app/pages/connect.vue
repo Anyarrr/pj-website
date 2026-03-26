@@ -63,8 +63,9 @@ const submitForm = async () => {
       }
     })
 
-    // Успешная отправка
-    isSubmitted.value = true
+    // Успешная отправка — редирект на регистрацию
+    // isSubmitted.value = true
+    window.location.href = 'https://pg19client-dev.tagan.ru/login/register'
   } catch (e: any) {
     console.error('Submit error:', e)
     submitError.value = e.data?.message || e.message || 'Произошла ошибка при отправке заявки'

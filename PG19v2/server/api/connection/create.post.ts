@@ -148,7 +148,49 @@ export default defineEventHandler(async (event) => {
     }
 
     // =====================================
-    // 5. ВОЗВРАТ РЕЗУЛЬТАТА
+    // 5. ОТПРАВКА В TARIFF API (Bitrix24 CRM)
+    // =====================================
+
+    try {
+      const TARIFF_API_URL = 'https://s1.tagan.ru/tariff/api/v1'
+      const TARIFF_API_USER = 'pg19_api_user'
+      const TARIFF_API_PASSWORD = 'GDx45ewgfcYTDFhgc&%RhgcvJHV'
+
+      const basicAuth = Buffer.from(`${TARIFF_API_USER}:${TARIFF_API_PASSWORD}`).toString('base64')
+
+      const crmPayload = {
+        initial_client_request: {
+          housing_type: 'house',
+          phone: `+${phone}`,
+          nickname: fullName,
+          address: addressText,
+          map_point: {
+            latitude: String(latitude),
+            longitude: String(longitude)
+          },
+          tariffs: [],
+          tariff_name: ''
+        }
+      }
+
+      const apiResponse = await fetch(`${TARIFF_API_URL}/initial_client_request`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${basicAuth}`
+        },
+        body: JSON.stringify(crmPayload)
+      })
+
+      const apiResult = await apiResponse.text()
+      console.log('Tariff API response:', apiResponse.status, apiResult)
+    } catch (crmError) {
+      // Не блокируем — заявка уже сохранена в Supabase
+      console.error('Tariff API (Bitrix24) error:', crmError)
+    }
+
+    // =====================================
+    // 6. ВОЗВРАТ РЕЗУЛЬТАТА
     // =====================================
 
     return {
