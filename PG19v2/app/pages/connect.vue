@@ -3,12 +3,10 @@ useHead({
   title: 'Подключиться — ПЖ19'
 })
 
-// Режим ввода адреса: 'input' или 'map'
-const addressMode = ref<'input' | 'map'>('input')
-
 // Форма
 const form = reactive({
-  fullName: '',
+  lastName: '',
+  firstName: '',
   phone: '',
   address: {
     text: '',
@@ -27,7 +25,8 @@ const submitError = ref('')
 // Валидация формы
 const isFormValid = computed(() => {
   return (
-    form.fullName.trim().length >= 2 &&
+    form.lastName.trim().length >= 2 &&
+    form.firstName.trim().length >= 2 &&
     phoneValid.value &&
     form.address.coordinates !== null
   )
@@ -52,7 +51,7 @@ const submitForm = async () => {
     const response = await $fetch('/api/connection/create', {
       method: 'POST',
       body: {
-        fullName: form.fullName.trim(),
+        fullName: `${form.lastName.trim()} ${form.firstName.trim()}`,
         phone: form.phone,
         address: {
           text: form.address.text,
@@ -76,7 +75,8 @@ const submitForm = async () => {
 
 // Сброс формы для новой заявки
 const resetForm = () => {
-  form.fullName = ''
+  form.lastName = ''
+  form.firstName = ''
   form.phone = ''
   form.address = {
     text: '',
@@ -87,7 +87,6 @@ const resetForm = () => {
   coverageResult.value = null
   isSubmitted.value = false
   submitError.value = ''
-  addressMode.value = 'input'
 }
 </script>
 
@@ -169,11 +168,18 @@ const resetForm = () => {
 
           <!-- Form -->
           <form v-else @submit.prevent="submitForm" class="space-y-6">
-            <!-- Имя -->
-            <div class="opacity-0 animate-fade-in-up">
+            <!-- Фамилия и Имя -->
+            <div class="opacity-0 animate-fade-in-up grid grid-cols-1 md:grid-cols-2 gap-4">
               <UInput
-                v-model="form.fullName"
-                label="Как к вам обращаться?"
+                v-model="form.lastName"
+                label="Фамилия"
+                type="text"
+                required
+                placeholder="Иванов"
+              />
+              <UInput
+                v-model="form.firstName"
+                label="Имя"
                 type="text"
                 required
                 placeholder="Иван"
@@ -190,54 +196,12 @@ const resetForm = () => {
               />
             </div>
 
-            <!-- Переключатель режима адреса -->
-            <div class="opacity-0 animate-fade-in-up stagger-2">
-              <label class="block text-sm font-medium text-[var(--text-secondary)] mb-3">
-                Адрес подключения <span class="text-primary">*</span>
-              </label>
-              <div class="glass-card p-2 flex gap-2">
-                <button
-                  @click="addressMode = 'input'"
-                  type="button"
-                  :class="[
-                    'flex-1 px-4 py-3 rounded-lg font-medium transition-all',
-                    addressMode === 'input'
-                      ? 'bg-gradient-to-r from-primary to-secondary text-white'
-                      : 'text-[var(--text-secondary)] hover:bg-white/5'
-                  ]"
-                >
-                  <Icon name="heroicons:magnifying-glass" class="w-4 h-4 inline mr-2" />
-                  Ввести адрес
-                </button>
-                <button
-                  @click="addressMode = 'map'"
-                  type="button"
-                  :class="[
-                    'flex-1 px-4 py-3 rounded-lg font-medium transition-all',
-                    addressMode === 'map'
-                      ? 'bg-gradient-to-r from-primary to-secondary text-white'
-                      : 'text-[var(--text-secondary)] hover:bg-white/5'
-                  ]"
-                >
-                  <Icon name="heroicons:map" class="w-4 h-4 inline mr-2" />
-                  Выбрать на карте
-                </button>
-              </div>
-            </div>
-
-            <!-- Адрес: Input или Map -->
-            <div class="opacity-0 animate-fade-in-up stagger-3 relative z-50">
-              <ConnectionAddressInput
-                v-if="addressMode === 'input'"
+            <!-- Адрес подключения + Карта -->
+            <div class="opacity-0 animate-fade-in-up stagger-2 relative z-50">
+              <ConnectionAddressWithMap
                 v-model="form.address"
                 label="Адрес подключения"
                 required
-                @coverage-check="onCoverageCheck"
-              />
-              <ConnectionMapPicker
-                v-else
-                v-model="form.address"
-                :show-coverage-zone="true"
                 @coverage-check="onCoverageCheck"
               />
             </div>

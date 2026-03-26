@@ -35,12 +35,12 @@ export function useDadataSuggest() {
   /**
    * Получить подсказки адресов с debounce
    */
-  async function getSuggestions(query: string, debounceMs: number = 300): Promise<void> {
+  async function getSuggestions(query: string, debounceMs: number = 100): Promise<void> {
     if (debounceTimer) {
       clearTimeout(debounceTimer)
     }
 
-    if (!query || query.trim().length < 2) {
+    if (!query || query.trim().length < 1) {
       suggestions.value = []
       return
     }
@@ -53,7 +53,7 @@ export function useDadataSuggest() {
         try {
           const response = await $fetch<{ suggestions: DadataSuggestion[] }>('/api/address/suggest', {
             method: 'POST',
-            body: { query: query.trim(), count: 10 }
+            body: { query: query.trim(), count: 5 }
           })
           suggestions.value = response.suggestions || []
         } catch (e: unknown) {
