@@ -148,11 +148,8 @@ function placeMarker(coords: [number, number]) {
   }
 }
 
-/** Обратное геокодирование через ymaps.geocode (как в v2pg19) */
+/** Обратное геокодирование через DaData /api/address/reverse */
 async function reverseGeocode(coords: [number, number]) {
-  const ymaps = (window as any).ymaps
-  if (!ymaps) return
-
   const [lon, lat] = coords
   busy.value = true
 
@@ -161,26 +158,19 @@ async function reverseGeocode(coords: [number, number]) {
   }
 
   try {
-    const result = await ymaps.geocode(coords)
-    const firstObj = result.geoObjects.get(0)
+    const data = await $fetch<any>('/api/address/reverse', {
+      method: 'POST',
+      body: { lat, lon }
+    })
 
-    if (!firstObj) {
-      busy.value = false
-      return
-    }
-
-    // Получаем адрес (как в v2pg19)
-    const addressLine = firstObj.getAddressLine()
-    const locality = firstObj.getLocalities().length
-      ? firstObj.getLocalities().join(', ')
-      : (firstObj.getAdministrativeAreas().join(', ') || '')
-    const thoroughfare = firstObj.getThoroughfare() || firstObj.getPremise() || ''
-    const caption = [locality, thoroughfare].filter(Boolean).join(', ')
+    const addressLine = data.address || ''
+    const components = data.components || {}
+    const caption = [components.city, components.street, components.house].filter(Boolean).join(', ')
 
     // Обновляем маркер
     if (ymapsPlacemark) {
       ymapsPlacemark.properties.set({
-        iconCaption: caption,
+        iconCaption: caption || addressLine,
         balloonContent: addressLine
       })
     }
@@ -188,20 +178,9 @@ async function reverseGeocode(coords: [number, number]) {
     // Заполняем поле ввода
     inputText.value = addressLine
 
-    // Компоненты адреса
-    const components: Record<string, any> = {}
-    const addressComponents = firstObj.properties.get('metaDataProperty.GeocoderMetaData.Address.Components') || []
-    for (const comp of addressComponents) {
-      if (comp.kind === 'country') components.country = comp.name
-      if (comp.kind === 'province') components.region = comp.name
-      if (comp.kind === 'locality') components.city = comp.name
-      if (comp.kind === 'street') components.street = comp.name
-      if (comp.kind === 'house') components.house = comp.name
-    }
-
     emit('update:modelValue', {
       text: addressLine,
-      coordinates: [lat, lon], // [lat, lon] для нашего формата
+      coordinates: [lat, lon],
       components
     })
 
@@ -226,6 +205,8 @@ function flyTo(lon: number, lat: number, zoom: number = 17) {
 // ===========================
 
 async function onInput() {
+  // Убираем английские буквы
+  inputText.value = inputText.value.replace(/[a-zA-Z]/g, '')
   const q = inputText.value.trim()
   status.value = 'idle'
   highlightedIndex.value = -1
@@ -416,7 +397,7 @@ const borderColor = computed(() => {
         <div
           v-if="showDropdown && suggestions.length"
           class="absolute left-0 right-0 mt-2 rounded-xl overflow-hidden shadow-2xl max-h-72 overflow-y-auto"
-          style="background: #111827; border: 1px solid #374151; z-index: 9999;"
+          style="background: #111827; border: 1px solid #374151; z-index: 40;"
         >
           <button
             v-for="(s, i) in suggestions"
@@ -452,17 +433,17 @@ const borderColor = computed(() => {
     <div class="rounded-xl overflow-hidden border border-[var(--glass-border)]">
 
       <!-- Панель над картой -->
-      <div class="flex items-center justify-between px-4 py-3" style="background: var(--glass-bg)">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-4 py-3" style="background: var(--glass-bg)">
         <button
           type="button"
           :disabled="busy || !mapReady"
           @click="locateMe"
-          class="px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2 text-sm"
+          class="px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2 text-sm shrink-0"
         >
           <Icon name="heroicons:map-pin" class="w-4 h-4" />
           Моё местоположение
         </button>
-        <span class="text-sm text-[var(--text-muted)]">
+        <span class="text-xs sm:text-sm text-[var(--text-muted)]">
           <template v-if="busy">
             <Icon name="heroicons:arrow-path" class="w-4 h-4 inline animate-spin mr-1" /> Определяем...
           </template>

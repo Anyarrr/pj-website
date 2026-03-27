@@ -15,6 +15,13 @@ const form = reactive({
   }
 })
 
+// Фильтр имени: только русские буквы/пробел/дефис, авто-капитализация
+const filterName = (value: string): string => {
+  let cleaned = value.replace(/[^а-яёА-ЯЁ\s-]/g, '')
+  cleaned = cleaned.toLowerCase().replace(/(^|[\s-])([а-яё])/g, (_, sep, char) => sep + char.toUpperCase())
+  return cleaned
+}
+
 // Состояния
 const phoneValid = ref(false)
 const coverageResult = ref<any>(null)
@@ -177,6 +184,7 @@ const resetForm = () => {
                 type="text"
                 required
                 placeholder="Иванов"
+                :filter="filterName"
               />
               <UInput
                 v-model="form.firstName"
@@ -184,6 +192,7 @@ const resetForm = () => {
                 type="text"
                 required
                 placeholder="Иван"
+                :filter="filterName"
               />
             </div>
 
@@ -198,7 +207,7 @@ const resetForm = () => {
             </div>
 
             <!-- Адрес подключения + Карта -->
-            <div class="opacity-0 animate-fade-in-up stagger-2 relative z-50">
+            <div class="opacity-0 animate-fade-in-up stagger-2 relative z-10">
               <ConnectionAddressWithMap
                 v-model="form.address"
                 label="Адрес подключения"

@@ -6,6 +6,11 @@
     </main>
     <LayoutAppFooter />
 
+    <!-- Кнопка "Наверх" на мобилке -->
+    <ClientOnly>
+      <ScrollToTop />
+    </ClientOnly>
+
     <!-- Виджет онлайн-чата -->
     <ClientOnly>
       <ChatWidget />
