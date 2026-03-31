@@ -434,15 +434,6 @@ const borderColor = computed(() => {
 
       <!-- Панель над картой -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-4 py-3" style="background: var(--glass-bg)">
-        <button
-          type="button"
-          :disabled="busy || !mapReady"
-          @click="locateMe"
-          class="px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2 text-sm shrink-0"
-        >
-          <Icon name="heroicons:map-pin" class="w-4 h-4" />
-          Моё местоположение
-        </button>
         <span class="text-xs sm:text-sm text-[var(--text-muted)]">
           <template v-if="busy">
             <Icon name="heroicons:arrow-path" class="w-4 h-4 inline animate-spin mr-1" /> Определяем...

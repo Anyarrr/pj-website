@@ -116,27 +116,27 @@ const resetForm = () => {
           
           <!-- Как это работает -->
           <div class="opacity-0 animate-fade-in-up stagger-2">
-            <div class="grid md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-3 gap-4 md:gap-6 md:grid-cols-3">
               <div class="text-center">
-                <div class="w-12 h-12 glass-card rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <span class="text-xl font-bold text-primary">1</span>
+                <div class="w-10 h-10 glass-card rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <span class="text-lg font-bold text-primary">1</span>
                 </div>
-                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-sm md:text-base">Заявка</h3>
-                <p class="text-[var(--text-muted)] text-xs md:text-sm">Укажите ваш адрес и контактные данные</p>
+                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-xs sm:text-sm md:text-base">Заявка</h3>
+                <p class="text-[var(--text-muted)] text-[11px] leading-snug md:text-sm">Укажите ваш адрес и контактные данные</p>
               </div>
               <div class="text-center">
-                <div class="w-12 h-12 glass-card rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <span class="text-xl font-bold text-secondary">2</span>
+                <div class="w-10 h-10 glass-card rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <span class="text-lg font-bold text-secondary">2</span>
                 </div>
-                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-sm md:text-base">Проверка зоны</h3>
-                <p class="text-[var(--text-muted)] text-xs md:text-sm">Мы автоматически проверим возможность подключения</p>
+                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-xs sm:text-sm md:text-base">Проверка зоны</h3>
+                <p class="text-[var(--text-muted)] text-[11px] leading-snug md:text-sm">Мы автоматически проверим возможность подключения</p>
               </div>
               <div class="text-center">
-                <div class="w-12 h-12 glass-card rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <span class="text-xl font-bold text-accent">3</span>
+                <div class="w-10 h-10 glass-card rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <span class="text-lg font-bold text-accent">3</span>
                 </div>
-                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-sm md:text-base">Подключение</h3>
-                <p class="text-[var(--text-muted)] text-xs md:text-sm">Наш специалист приедет и настроит оборудование</p>
+                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-xs sm:text-sm md:text-base">Подключение</h3>
+                <p class="text-[var(--text-muted)] text-[11px] leading-snug md:text-sm">Наш специалист приедет и настроит оборудование</p>
               </div>
             </div>
           </div>

@@ -181,8 +181,7 @@ const servicesNav = [
           </nav>
 
           <!-- Theme toggle mobile -->
-          <div class="flex items-center justify-between px-4 py-3 glass-card rounded-xl">
-            <span class="text-[var(--text-secondary)]">Тема оформления</span>
+
             <button
               @click="toggleTheme"
               class="theme-toggle"
@@ -192,7 +191,7 @@ const servicesNav = [
                 class="w-5 h-5"
               />
             </button>
-          </div>
+          
 
           <!-- Services nav mobile -->
           <nav class="grid grid-cols-2 gap-3">
