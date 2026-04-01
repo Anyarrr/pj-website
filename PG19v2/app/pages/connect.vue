@@ -145,7 +145,7 @@ const resetForm = () => {
     </section>
 
     <!-- Form -->
-    <section class="py-20 md:py-32" :style="{ background: 'var(--bg-base)' }">
+    <section class="pt-2 pb-16 md:py-32" :style="{ background: 'var(--bg-base)' }">
       <div class="container mx-auto px-4">
         <div class="max-w-3xl mx-auto">
           <!-- Success message -->
@@ -175,9 +175,9 @@ const resetForm = () => {
           </div>
 
           <!-- Form -->
-          <form v-else @submit.prevent="submitForm" class="space-y-6">
+          <form v-else @submit.prevent="submitForm" class="space-y-5 md:space-y-6">
             <!-- Фамилия и Имя -->
-            <div class="opacity-0 animate-fade-in-up grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="opacity-0 animate-fade-in-up grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 md:pt-0">
               <UInput
                 v-model="form.lastName"
                 label="Фамилия"

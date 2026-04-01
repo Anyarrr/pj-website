@@ -31,48 +31,48 @@ const included = [
 </script>
 
 <template>
-  <section class="py-20 md:py-32 mesh-gradient-dark relative overflow-hidden">
+  <section class="py-14 md:py-32 mesh-gradient-dark relative overflow-hidden">
     <!-- Decorative elements -->
     <div class="floating-shape w-[600px] h-[600px] bg-primary/10 -bottom-48 -left-48"></div>
     <div class="floating-shape w-[400px] h-[400px] bg-secondary/10 -top-32 -right-32"></div>
 
     <div class="container mx-auto px-4 relative z-10">
-      <div class="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+      <div class="grid lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-center">
         <!-- Content -->
         <div>
-          <span class="inline-block text-primary font-medium text-sm uppercase tracking-wider mb-4 opacity-0 animate-fade-in-up">
+          <span class="inline-block text-primary font-medium text-xs md:text-sm uppercase tracking-wider mb-3 md:mb-4 opacity-0 animate-fade-in-up">
             Наши преимущества
           </span>
 
-          <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] mb-6 opacity-0 animate-fade-in-up stagger-1">
+          <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] mb-4 md:mb-6 opacity-0 animate-fade-in-up stagger-1">
             Почему мы —
             <span class="text-gradient-primary">сообщество</span>,
             <br class="hidden md:block" />
             а не провайдер?
           </h2>
 
-          <p class="text-lg text-[var(--text-muted)] mb-12 leading-relaxed opacity-0 animate-fade-in-up stagger-2">
+          <p class="text-sm md:text-lg text-[var(--text-muted)] mb-8 md:mb-12 leading-relaxed opacity-0 animate-fade-in-up stagger-2">
             Коммерческие провайдеры ориентированы на прибыль.
             Мы — на <span class="text-[var(--text-primary)]">доверие, прозрачность и равноправие</span>.
             Каждый член сообщества — не клиент, а полноправный участник.
           </p>
 
-          <div class="grid sm:grid-cols-2 gap-6">
+          <div class="grid sm:grid-cols-2 gap-4 md:gap-6">
             <div
               v-for="(feature, index) in features"
               :key="index"
               class="group opacity-0 animate-fade-in-up"
               :class="`stagger-${index + 2}`"
             >
-              <div class="flex gap-4">
-                <div class="flex-shrink-0 w-12 h-12 rounded-xl glass-card flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                  <Icon :name="feature.icon" class="w-6 h-6 text-primary" />
+              <div class="flex gap-3 md:gap-4">
+                <div class="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl glass-card flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                  <Icon :name="feature.icon" class="w-5 h-5 md:w-6 md:h-6 text-primary" />
                 </div>
                 <div>
-                  <h3 class="font-semibold text-[var(--text-primary)] mb-1 group-hover:text-primary transition-colors">
+                  <h3 class="text-sm md:text-base font-semibold text-[var(--text-primary)] mb-1 group-hover:text-primary transition-colors">
                     {{ feature.title }}
                   </h3>
-                  <p class="text-[var(--text-muted)] text-sm leading-relaxed">
+                  <p class="text-[13px] md:text-sm text-[var(--text-muted)] leading-relaxed">
                     {{ feature.description }}
                   </p>
                 </div>
@@ -86,45 +86,45 @@ const included = [
           <!-- Glow effect -->
           <div class="absolute -inset-4 bg-gradient-to-br from-primary/30 via-secondary/20 to-accent/20 rounded-[40px] blur-2xl opacity-60"></div>
 
-          <div class="pricing-card relative p-8 md:p-10">
+          <div class="pricing-card relative p-5 md:p-10">
             <!-- Header -->
-            <div class="text-center mb-10">
-              <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 mb-6">
+            <div class="text-center mb-7 md:mb-10">
+              <div class="inline-flex items-center gap-2 glass-card rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-4 md:mb-6">
                 <Icon name="heroicons:sparkles" class="w-4 h-4 text-primary" />
-                <span class="text-sm text-[var(--text-secondary)]">Единый взнос</span>
+                <span class="text-xs md:text-sm text-[var(--text-secondary)]">Единый взнос</span>
               </div>
 
-              <p class="text-[var(--text-muted)] mb-3">Членский взнос от</p>
+              <p class="text-sm md:text-base text-[var(--text-muted)] mb-2 md:mb-3">Членский взнос от</p>
               <div class="flex items-baseline justify-center gap-2">
-                <span class="text-6xl md:text-7xl font-bold text-[var(--text-primary)]">699</span>
+                <span class="text-5xl md:text-7xl font-bold text-[var(--text-primary)]">699</span>
                 <div class="text-left">
-                  <span class="text-2xl text-[var(--text-muted)]">₽</span>
-                  <p class="text-sm text-[var(--text-muted)]">в месяц</p>
+                  <span class="text-xl md:text-2xl text-[var(--text-muted)]">₽</span>
+                  <p class="text-xs md:text-sm text-[var(--text-muted)]">в месяц</p>
                 </div>
               </div>
-              <p class="text-sm text-[var(--text-muted)] mt-3">
+              <p class="text-xs md:text-sm text-[var(--text-muted)] mt-2 md:mt-3">
                 Зависит от локации подключения
               </p>
             </div>
 
             <!-- Included -->
-            <div class="space-y-4 mb-10">
+            <div class="space-y-3 md:space-y-4 mb-7 md:mb-10">
               <div
                 v-for="item in included"
                 :key="item.text"
-                class="flex items-center gap-4 p-4 rounded-xl bg-[var(--glass-bg)] hover:bg-[var(--glass-hover-bg)] transition-colors"
+                class="flex items-center gap-3 p-3 md:gap-4 md:p-4 rounded-xl bg-[var(--glass-bg)] hover:bg-[var(--glass-hover-bg)] transition-colors"
               >
-                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
-                  <Icon :name="item.icon" class="w-5 h-5 text-accent" />
+                <div class="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
+                  <Icon :name="item.icon" class="w-4 h-4 md:w-5 md:h-5 text-accent" />
                 </div>
-                <span class="text-[var(--text-primary)] font-medium">{{ item.text }}</span>
+                <span class="text-sm md:text-base text-[var(--text-primary)] font-medium">{{ item.text }}</span>
               </div>
             </div>
 
             <!-- CTA -->
             <NuxtLink
               to="/connect"
-              class="group btn-accent flex items-center justify-center gap-3 w-full py-5 text-lg"
+              class="group btn-accent flex items-center justify-center gap-3 w-full py-3.5 md:py-5 text-base md:text-lg"
             >
               <span>Проверить подключение</span>
               <Icon
@@ -134,7 +134,7 @@ const included = [
             </NuxtLink>
 
             <!-- Legal note -->
-            <p class="text-xs text-[var(--text-muted)] text-center mt-6 flex items-center justify-center gap-2">
+            <p class="text-[11px] md:text-xs text-[var(--text-muted)] text-center mt-4 md:mt-6 flex items-center justify-center gap-2">
               <Icon name="heroicons:shield-check" class="w-4 h-4" />
               Деятельность в рамках закона РФ о потребительской кооперации
             </p>

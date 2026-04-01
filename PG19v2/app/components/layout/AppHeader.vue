@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 const chatStore = useChatStore()
+const route = useRoute()
 const isMenuOpen = ref(false)
 const isScrolled = ref(false)
 const isCallbackOpen = ref(false)
@@ -9,8 +10,13 @@ const toggleTheme = () => {
   colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
 }
 
+const closeMenu = () => {
+  isMenuOpen.value = false
+}
+
 // Scroll listener с правильной инициализацией
 let scrollHandler: (() => void) | null = null
+let resizeHandler: (() => void) | null = null
 
 onMounted(() => {
   scrollHandler = () => {
@@ -19,12 +25,23 @@ onMounted(() => {
   // Установить начальное состояние сразу (избегает hydration mismatch)
   scrollHandler()
   window.addEventListener('scroll', scrollHandler, { passive: true })
+
+  resizeHandler = () => {
+    if (window.innerWidth >= 1024) {
+      closeMenu()
+    }
+  }
+  window.addEventListener('resize', resizeHandler, { passive: true })
 })
 
 onUnmounted(() => {
   if (scrollHandler) {
     window.removeEventListener('scroll', scrollHandler)
   }
+  if (resizeHandler) {
+    window.removeEventListener('resize', resizeHandler)
+  }
+  document.body.style.overflow = ''
 })
 
 const mainNav = [
@@ -41,6 +58,19 @@ const servicesNav = [
   { name: 'Видеонаблюдение', href: '/cctv', icon: 'heroicons:video-camera' },
   { name: 'Домофон', href: '/intercom', icon: 'heroicons:home' }
 ]
+
+watch(
+  () => route.fullPath,
+  () => {
+    closeMenu()
+  }
+)
+
+watch(isMenuOpen, (open) => {
+  if (import.meta.client) {
+    document.body.style.overflow = open ? 'hidden' : ''
+  }
+})
 </script>
 
 <template>
@@ -145,7 +175,9 @@ const servicesNav = [
         <!-- Mobile menu button -->
         <button
           @click="isMenuOpen = !isMenuOpen"
-          class="lg:hidden p-2 text-[var(--text-secondary)] hover:text-primary transition-colors rounded-lg hover:bg-[var(--glass-bg)]"
+          class="lg:hidden inline-flex items-center justify-center w-11 h-11 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-secondary)] hover:text-primary hover:border-primary/40 transition-all"
+          :aria-expanded="isMenuOpen"
+          aria-label="Открыть меню"
         >
           <Icon :name="isMenuOpen ? 'heroicons:x-mark' : 'heroicons:bars-3'" class="w-6 h-6" />
         </button>
@@ -155,87 +187,122 @@ const servicesNav = [
     <!-- Mobile menu -->
     <Transition
       enter-active-class="transition duration-300 ease-out"
-      enter-from-class="opacity-0 -translate-y-4"
+      enter-from-class="opacity-0 -translate-y-3"
       enter-to-class="opacity-100 translate-y-0"
       leave-active-class="transition duration-200 ease-in"
       leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 -translate-y-4"
+      leave-to-class="opacity-0 -translate-y-3"
     >
-      <div
-        v-if="isMenuOpen"
-        class="lg:hidden absolute top-full left-0 right-0 backdrop-blur-xl border-t"
-        :style="{ background: 'var(--header-blur-bg)', borderColor: 'var(--header-border)' }"
-      >
-        <div class="container mx-auto px-4 py-6 space-y-6">
-          <!-- Main nav mobile -->
-          <nav class="flex flex-wrap gap-2">
-            <NuxtLink
-              v-for="item in mainNav"
-              :key="item.href"
-              :to="item.href"
-              @click="isMenuOpen = false"
-              class="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-full border border-[var(--glass-border)] hover:border-primary/50 hover:bg-primary/10 transition-all"
-            >
-              {{ item.name }}
-            </NuxtLink>
-          </nav>
+      <div v-if="isMenuOpen" class="lg:hidden">
+        <button
+          type="button"
+          class="fixed inset-0 top-[108px] bg-slate-950/35 backdrop-blur-[2px]"
+          aria-label="Закрыть меню"
+          @click="closeMenu"
+        />
+        <div
+          class="absolute top-full left-0 right-0 border-t shadow-2xl"
+          :style="{ background: 'var(--header-blur-bg)', borderColor: 'var(--header-border)' }"
+        >
+          <div class="container mx-auto px-4 py-3">
+            <div class="max-h-[calc(100vh-7.5rem)] overflow-y-auto rounded-[24px] border border-[var(--glass-border)] bg-[var(--bg-surface)]/95 p-3 shadow-[0_20px_60px_rgba(15,23,42,0.18)] backdrop-blur-xl">
+              <div class="space-y-4">
+                <div class="flex items-center justify-between gap-3 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-2.5">
+                  <div>
+                    <p class="text-sm font-semibold text-[var(--text-primary)]">Меню</p>
+                    <p class="text-xs text-[var(--text-muted)]">Навигация и быстрые действия</p>
+                  </div>
+                  <button
+                    @click="toggleTheme"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--glass-border)] text-[var(--text-secondary)] transition-all hover:border-primary/40 hover:text-primary"
+                    :aria-label="colorMode.value === 'dark' ? 'Светлая тема' : 'Тёмная тема'"
+                  >
+                    <Icon
+                      :name="colorMode.value === 'dark' ? 'heroicons:sun' : 'heroicons:moon'"
+                      class="w-5 h-5"
+                    />
+                  </button>
+                </div>
 
-          <!-- Theme toggle mobile -->
+                <div class="space-y-2.5">
+                  <p class="px-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    Разделы
+                  </p>
+                  <nav class="grid grid-cols-2 gap-2">
+                    <NuxtLink
+                      v-for="item in mainNav"
+                      :key="item.href"
+                      :to="item.href"
+                      @click="closeMenu"
+                      class="flex min-h-[54px] items-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-2.5 text-sm font-medium leading-tight text-[var(--text-secondary)] transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-[var(--text-primary)]"
+                      active-class="border-primary/40 bg-primary/10 text-primary"
+                    >
+                      <span>{{ item.name }}</span>
+                    </NuxtLink>
+                    <NuxtLink
+                      to="/news"
+                      @click="closeMenu"
+                      class="flex min-h-[54px] items-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-2.5 text-sm font-medium leading-tight text-[var(--text-secondary)] transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-[var(--text-primary)]"
+                      active-class="border-primary/40 bg-primary/10 text-primary"
+                    >
+                      <span>Новости</span>
+                    </NuxtLink>
+                  </nav>
+                </div>
 
-            <button
-              @click="toggleTheme"
-              class="theme-toggle"
-            >
-              <Icon
-                :name="colorMode.value === 'dark' ? 'heroicons:sun' : 'heroicons:moon'"
-                class="w-5 h-5"
-              />
-            </button>
-          
+                <div class="space-y-2.5">
+                  <p class="px-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    Услуги
+                  </p>
+                  <nav class="grid grid-cols-2 gap-2">
+                    <NuxtLink
+                      v-for="item in servicesNav"
+                      :key="item.href"
+                      :to="item.href"
+                      @click="closeMenu"
+                      class="flex items-center gap-2.5 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-2.5 text-[var(--text-secondary)] transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-[var(--text-primary)]"
+                      active-class="border-primary/40 bg-primary/10 text-primary"
+                    >
+                      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-secondary/10">
+                        <Icon :name="item.icon" class="w-4.5 h-4.5 text-primary" />
+                      </div>
+                      <span class="text-xs font-medium leading-tight">{{ item.name }}</span>
+                    </NuxtLink>
+                  </nav>
+                </div>
 
-          <!-- Services nav mobile -->
-          <nav class="grid grid-cols-2 gap-3">
-            <NuxtLink
-              v-for="item in servicesNav"
-              :key="item.href"
-              :to="item.href"
-              @click="isMenuOpen = false"
-              class="flex items-center gap-3 p-4 rounded-xl glass-card text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            >
-              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/10 flex items-center justify-center">
-                <Icon :name="item.icon" class="w-5 h-5 text-primary" />
+                <div class="space-y-2.5">
+                  <p class="px-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    Быстрые действия
+                  </p>
+                  <div class="grid grid-cols-1 gap-2">
+                    <button
+                      @click="chatStore.open(); closeMenu()"
+                      class="flex items-center justify-center gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-3 text-sm font-semibold text-[var(--text-primary)] transition-all hover:border-primary/40 hover:bg-primary/10"
+                    >
+                      <Icon name="heroicons:chat-bubble-left-right" class="w-5 h-5 text-primary" />
+                      <span>Поддержка</span>
+                    </button>
+                    <button
+                      @click="isCallbackOpen = true; closeMenu()"
+                      class="flex items-center justify-center gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-3 text-sm font-semibold text-[var(--text-primary)] transition-all hover:border-primary/40 hover:bg-primary/10"
+                    >
+                      <Icon name="heroicons:phone-arrow-up-right" class="w-5 h-5 text-primary" />
+                      <span>Обратный звонок</span>
+                    </button>
+                    <a
+                      href="https://pg19-client.doka.team"
+                      @click="closeMenu"
+                      class="flex items-center justify-center gap-2 rounded-2xl bg-info px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-info/90"
+                    >
+                      <Icon name="heroicons:user-circle" class="w-5 h-5" />
+                      <span>Личный кабинет</span>
+                    </a>
+                  </div>
+                </div>
               </div>
-              <span class="font-medium">{{ item.name }}</span>
-            </NuxtLink>
-          </nav>
-
-          <!-- Support button mobile -->
-          <button
-            @click="chatStore.open(); isMenuOpen = false"
-            class="flex items-center justify-center gap-2 w-full py-4 glass-card text-[var(--text-primary)] font-semibold rounded-xl transition-all hover:bg-primary/10"
-          >
-            <Icon name="heroicons:chat-bubble-left-right" class="w-5 h-5 text-primary" />
-            <span>Поддержка</span>
-          </button>
-
-          <!-- Callback button mobile -->
-          <button
-            @click="isCallbackOpen = true; isMenuOpen = false"
-            class="flex items-center justify-center gap-2 w-full py-4 glass-card text-[var(--text-primary)] font-semibold rounded-xl transition-all hover:bg-primary/10"
-          >
-            <Icon name="heroicons:phone-arrow-up-right" class="w-5 h-5 text-primary" />
-            <span>Обратный звонок</span>
-          </button>
-
-          <!-- Personal Account mobile -->
-          <a
-            href="https://pg19-client.doka.team"
-            @click="isMenuOpen = false"
-            class="flex items-center justify-center gap-2 w-full py-4 bg-info hover:bg-info/90 text-white font-semibold rounded-xl transition-all"
-          >
-            <Icon name="heroicons:user-circle" class="w-5 h-5" />
-            <span>Личный кабинет</span>
-          </a>
+            </div>
+          </div>
         </div>
       </div>
     </Transition>

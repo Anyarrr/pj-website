@@ -24,7 +24,7 @@ const badgeText = computed(() => content.value?.hero_stats?.badge || 'Более
 </script>
 
 <template>
-  <section class="relative min-h-screen flex items-center mesh-gradient-hero overflow-hidden pt-20">
+  <section class="relative min-h-screen flex items-center mesh-gradient-hero overflow-hidden pt-18 md:pt-20">
     <!-- Animated network pattern -->
     <div class="absolute inset-0 network-pattern opacity-30"></div>
 
@@ -34,28 +34,28 @@ const badgeText = computed(() => content.value?.hero_stats?.badge || 'Более
     <div class="floating-shape w-[300px] h-[300px] bg-info/10 top-1/2 left-1/3 animate-float" style="animation-delay: -4s;"></div>
 
     <!-- Content -->
-    <div class="container mx-auto px-4 py-16 md:py-24 relative z-10">
+    <div class="container mx-auto px-4 py-12 md:py-24 relative z-10">
       <div class="max-w-5xl mx-auto">
         <!-- Main content grid -->
-        <div class="grid lg:grid-cols-5 gap-12 lg:gap-16 items-center">
+        <div class="grid lg:grid-cols-5 gap-8 md:gap-12 lg:gap-16 items-center">
           <!-- Text content -->
           <div class="lg:col-span-3 text-center lg:text-left">
             <!-- Badge -->
             <div
-              class="inline-flex items-center gap-2 glass-card rounded-full px-5 py-2.5 mb-8 opacity-0 animate-fade-in-up"
+              class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 mb-6 md:px-5 md:py-2.5 md:mb-8 opacity-0 animate-fade-in-up"
             >
-              <span class="relative flex h-2.5 w-2.5">
+              <span class="relative flex h-2 w-2 md:h-2.5 md:w-2.5">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 md:h-2.5 md:w-2.5 bg-accent"></span>
               </span>
-              <span class="text-sm font-medium text-[var(--text-secondary)]">{{ badgeText }}</span>
+              <span class="text-xs md:text-sm font-medium text-[var(--text-secondary)]">{{ badgeText }}</span>
             </div>
 
             <!-- Heading -->
             <h1
-              class="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-[1.1] opacity-0 animate-fade-in-up stagger-1"
+              class="text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 leading-[1.08] opacity-0 animate-fade-in-up stagger-1"
             >
-              <img src="/logo.png" alt="ПЖ19" class="inline-block h-12 md:h-16 lg:h-20 align-baseline mr-2" />
+              <img src="/logo.png" alt="ПЖ19" class="inline-block h-9 sm:h-12 md:h-16 lg:h-20 align-baseline mr-1.5 md:mr-2" />
               <span class="text-[var(--text-primary)]">—</span>
               <br class="hidden sm:block" />
               <span class="text-gradient-primary">сообщество</span>
@@ -66,7 +66,7 @@ const badgeText = computed(() => content.value?.hero_stats?.badge || 'Более
 
             <!-- Subheading -->
             <p
-              class="text-lg md:text-xl text-[var(--text-muted)] mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed opacity-0 animate-fade-in-up stagger-2"
+              class="text-base md:text-xl text-[var(--text-muted)] mb-7 md:mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed opacity-0 animate-fade-in-up stagger-2"
             >
               Закрытое сообщество для совместного доступа к услугам связи.
               <span class="text-[var(--text-secondary)]">Мы не продаём интернет</span> — мы вместе строим инфраструктуру для себя.
@@ -78,7 +78,7 @@ const badgeText = computed(() => content.value?.hero_stats?.badge || 'Более
             >
               <NuxtLink
                 to="/about"
-                class="w-full sm:w-auto btn-secondary inline-flex items-center justify-center gap-2 text-lg"
+                class="w-full sm:w-auto btn-secondary inline-flex items-center justify-center gap-2 text-base md:text-lg py-3 md:py-4"
               >
                 <Icon name="heroicons:play-circle" class="w-5 h-5" />
                 <span>О нас</span>
@@ -88,17 +88,17 @@ const badgeText = computed(() => content.value?.hero_stats?.badge || 'Более
 
           <!-- Stats cards -->
           <div class="lg:col-span-2 lg:pt-6">
-            <div class="grid gap-4 max-w-sm mx-auto lg:ml-auto">
+            <div class="grid gap-3 md:gap-4 max-w-sm mx-auto lg:ml-auto">
               <!-- Speed card - special emphasis -->
-              <div class="glass-card rounded-2xl p-6 opacity-0 animate-fade-in-up stagger-2 border-primary/30">
-                <div class="flex items-center gap-2 text-[var(--text-muted)] text-sm mb-1">
+              <div class="glass-card rounded-2xl p-4 md:p-6 opacity-0 animate-fade-in-up stagger-2 border-primary/30">
+                <div class="flex items-center gap-2 text-[var(--text-muted)] text-xs md:text-sm mb-1">
                   <Icon name="heroicons:bolt" class="w-4 h-4 text-primary" />
                   <span>Скорость интернета</span>
                 </div>
-                <p class="text-xl md:text-2xl font-bold text-primary mb-1">
+                <p class="text-lg md:text-2xl font-bold text-primary mb-1">
                   Без ограничений
                 </p>
-                <p class="text-[var(--text-muted)] text-sm">
+                <p class="text-[var(--text-muted)] text-xs md:text-sm">
                   Канал до <span class="text-[var(--text-secondary)] font-semibold">1000 Мбит/с</span> — вся скорость ваша
                 </p>
               </div>
@@ -106,12 +106,12 @@ const badgeText = computed(() => content.value?.hero_stats?.badge || 'Более
               <div
                 v-for="(stat, index) in stats"
                 :key="stat.label"
-                class="glass-card rounded-2xl p-6 opacity-0 animate-fade-in-up"
+                class="glass-card rounded-2xl p-4 md:p-6 opacity-0 animate-fade-in-up"
                 :class="`stagger-${index + 3}`"
               >
                 <div class="flex items-baseline gap-2">
                   <span
-                    class="text-4xl md:text-5xl font-bold"
+                    class="text-3xl md:text-5xl font-bold"
                     :class="{
                       'text-primary': stat.color === 'primary',
                       'text-secondary': stat.color === 'secondary',
@@ -120,16 +120,16 @@ const badgeText = computed(() => content.value?.hero_stats?.badge || 'Более
                   >
                     {{ stat.value }}
                   </span>
-                  <span class="text-lg text-[var(--text-muted)]">{{ stat.unit }}</span>
+                  <span class="text-base md:text-lg text-[var(--text-muted)]">{{ stat.unit }}</span>
                 </div>
-                <p class="text-[var(--text-muted)] text-sm mt-1">{{ stat.label }}</p>
+                <p class="text-[var(--text-muted)] text-xs md:text-sm mt-1">{{ stat.label }}</p>
               </div>
 
               <!-- Check connection button -->
               <div class="opacity-0 animate-fade-in-up stagger-5">
                 <NuxtLink
                   to="/connect"
-                  class="group w-full btn-accent inline-flex items-center justify-center gap-3 px-8 py-4 text-lg"
+                  class="group w-full btn-accent inline-flex items-center justify-center gap-3 px-6 py-3.5 md:px-8 md:py-4 text-base md:text-lg"
                 >
                   <span>Проверить подключение</span>
                   <Icon
