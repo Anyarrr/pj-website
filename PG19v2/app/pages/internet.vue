@@ -115,44 +115,41 @@ function toggleEquipment(type: string) {
           </p>
 
           <!-- Additional Equipment -->
-          <div class="max-w-2xl mx-auto mb-8 opacity-0 animate-fade-in-up stagger-3">
-            <!-- <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Дополнительное оборудование</h3> -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="max-w-2xl mx-auto mb-6 text-left opacity-0 animate-fade-in-up stagger-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div
                 v-for="equipment in additionalEquipment"
                 :key="equipment.type"
                 @click="toggleEquipment(equipment.type)"
-                class="glass-card p-4 rounded-xl cursor-pointer transition-all duration-200 border-2"
+                class="glass-card p-4 rounded-xl cursor-pointer transition-all duration-200 border-2 h-full flex flex-col"
                 :class="selectedEquipment[equipment.type] ? 'border-primary bg-primary/10' : 'border-transparent hover:border-white/20'"
               >
                 <div class="flex items-start gap-3">
-                  <div class="flex-shrink-0">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/10 flex items-center justify-center">
-                      <Icon :name="equipment.icon" class="w-5 h-5 text-primary" />
-                    </div>
+                  <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/10 flex items-center justify-center flex-shrink-0">
+                    <Icon :name="equipment.icon" class="w-4 h-4 text-primary" />
                   </div>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-start justify-between gap-2 mb-1">
-                      <h4 class="text-sm font-semibold text-[var(--text-primary)]">{{ equipment.name }}</h4>
-                      <span class="text-sm font-bold text-primary whitespace-nowrap">+ {{ equipment.price_monthly }} ₽</span>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                      <h4 class="text-base font-semibold text-[var(--text-primary)]">{{ equipment.name }}</h4>
+                      <span class="text-sm font-bold text-primary whitespace-nowrap flex-shrink-0 ml-2">+{{ equipment.price_monthly }} ₽</span>
                     </div>
-                    <p class="text-xs text-[var(--text-muted)] mb-3">{{ equipment.description }}</p>
-                    <div class="flex items-center justify-between">
-                      <span class="text-xs text-[var(--text-muted)]">
-                        {{ selectedEquipment[equipment.type] ? 'Включено' : 'Выключено' }}
-                      </span>
-                      <button 
-                        @click.stop="toggleEquipment(equipment.type)"
-                        class="relative w-11 h-6 rounded-full transition-colors duration-200"
-                        :class="selectedEquipment[equipment.type] ? 'bg-primary' : 'bg-[var(--text-muted)]/30'"
-                      >
-                        <span
-                          class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
-                          :class="selectedEquipment[equipment.type] ? 'translate-x-5' : 'translate-x-0'"
-                        />
-                      </button>
-                    </div>
+                    <p class="text-sm text-[var(--text-muted)] leading-tight mb-3">{{ equipment.description }}</p>
                   </div>
+                </div>
+                <div class="flex items-center justify-between pt-3 mt-auto border-t border-white/10">
+                  <span class="text-[10px] text-[var(--text-muted)] whitespace-nowrap">
+                    {{ selectedEquipment[equipment.type] ? 'Вкл' : 'Выкл' }}
+                  </span>
+                  <button
+                    @click.stop="toggleEquipment(equipment.type)"
+                    class="relative w-9 h-5 rounded-full transition-colors duration-200 flex-shrink-0 border border-white/20"
+                    :class="selectedEquipment[equipment.type] ? 'bg-primary border-primary' : 'bg-white/10'"
+                  >
+                    <span
+                      class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
+                      :class="selectedEquipment[equipment.type] ? 'translate-x-4' : 'translate-x-0'"
+                    />
+                  </button>
                 </div>
               </div>
             </div>
