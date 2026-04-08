@@ -9,29 +9,8 @@ interface Feature {
   description: string
 }
 
-interface Equipment {
-  name: string
-  type: string
-  description: string
-  price_monthly: number
-  icon: string
-}
-
 interface InternetContent {
   items: Feature[]
-  equipment?: {
-    title: string
-    router: {
-      name: string
-      description: string
-      price_monthly: number
-    }
-    tv_box?: {
-      name: string
-      description: string
-      price_monthly: number
-    }
-  }
 }
 
 // Загружаем контент из API
@@ -45,52 +24,8 @@ const features = computed(() => content.value?.features?.items || [
   { icon: 'heroicons:arrow-down-tray', title: '1 ГБ за 20 сек', description: 'Скачивание файлов на максимальной скорости' }
 ])
 
-const routerEquipment = computed(() => content.value?.features?.equipment?.router)
-const tvBoxEquipment = computed(() => content.value?.features?.equipment?.tv_box)
-
-// Реактивные переменные для выбора оборудования
-const selectedEquipment = ref<{ [key: string]: boolean }>({
-  router: false,
-  tv_box: false
-})
-
-// Дополнительное оборудование
-const additionalEquipment: Equipment[] = computed(() => [
-  {
-    name: routerEquipment.value?.name || 'Wi-Fi роутер',
-    type: 'router',
-    description: routerEquipment.value?.description || 'SNR-CPE-ME2',
-    price_monthly: routerEquipment.value?.price_monthly || 99,
-    icon: 'heroicons:wifi'
-  },
-  {
-    name: tvBoxEquipment.value?.name || 'ТВ-приставка',
-    type: 'tv_box',
-    description: tvBoxEquipment.value?.description || 'Imaqliq G-Box',
-    price_monthly: tvBoxEquipment.value?.price_monthly || 99,
-    icon: 'heroicons:tv'
-  }
-])
-
 // Базовая цена
 const basePrice = 699
-
-// Вычисляем общую цену
-const totalPrice = computed(() => {
-  let total = basePrice
-  if (selectedEquipment.value.router) {
-    total += routerEquipment.value?.price_monthly || 99
-  }
-  if (selectedEquipment.value.tv_box) {
-    total += tvBoxEquipment.value?.price_monthly || 99
-  }
-  return total
-})
-
-// Переключение выбора оборудования
-function toggleEquipment(type: string) {
-  selectedEquipment.value[type] = !selectedEquipment.value[type]
-}
 </script>
 
 <template>
@@ -114,52 +49,11 @@ function toggleEquipment(type: string) {
             Никаких тарифных ограничений, скорость зависит только от вашего оборудования.
           </p>
 
-          <!-- Additional Equipment -->
-          <div class="max-w-2xl mx-auto mb-6 text-left opacity-0 animate-fade-in-up stagger-3">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div
-                v-for="equipment in additionalEquipment"
-                :key="equipment.type"
-                @click="toggleEquipment(equipment.type)"
-                class="glass-card rounded-xl cursor-pointer transition-all duration-200 border-2 h-full flex flex-col p-3 sm:p-4"
-                :class="selectedEquipment[equipment.type] ? 'border-primary bg-primary/10' : 'border-transparent hover:border-white/20'"
-              >
-                <div class="flex items-start gap-2 sm:gap-3">
-                  <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/10 flex items-center justify-center flex-shrink-0">
-                    <Icon :name="equipment.icon" class="w-4 h-4 text-primary" />
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between gap-2 mb-1 sm:mb-2">
-                      <h4 class="text-sm sm:text-base font-semibold text-[var(--text-primary)]">{{ equipment.name }}</h4>
-                      <span class="text-xs sm:text-sm font-bold text-primary whitespace-nowrap flex-shrink-0 ml-2">+{{ equipment.price_monthly }} ₽</span>
-                    </div>
-                    <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-tight mb-2 sm:mb-3">{{ equipment.description }}</p>
-                  </div>
-                </div>
-                <div class="flex items-center justify-between pt-2 sm:pt-3 mt-auto border-t border-white/10">
-                  <span class="text-[10px] sm:text-xs text-[var(--text-muted)] whitespace-nowrap">
-                    {{ selectedEquipment[equipment.type] ? 'Вкл' : 'Выкл' }}
-                  </span>
-                  <button
-                    @click.stop="toggleEquipment(equipment.type)"
-                    class="relative w-9 h-5 rounded-full transition-colors duration-200 flex-shrink-0 border border-white/20"
-                    :class="selectedEquipment[equipment.type] ? 'bg-primary border-primary' : 'bg-white/10'"
-                  >
-                    <span
-                      class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
-                      :class="selectedEquipment[equipment.type] ? 'translate-x-4' : 'translate-x-0'"
-                    />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- Price and Connect Button -->
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 opacity-0 animate-fade-in-up stagger-4">
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 opacity-0 animate-fade-in-up stagger-3">
             <div class="inline-flex items-baseline gap-2">
               <span class="text-base md:text-lg text-[var(--text-muted)]">от</span>
-              <span class="text-3xl md:text-4xl font-bold text-gradient-primary">{{ totalPrice }}</span>
+              <span class="text-3xl md:text-4xl font-bold text-gradient-primary">{{ basePrice }}</span>
               <span class="text-base md:text-lg text-[var(--text-muted)]">₽/мес</span>
             </div>
 

@@ -3,6 +3,58 @@ useHead({
   title: 'Подключиться — ПЖ19'
 })
 
+interface Equipment {
+  name: string
+  type: string
+  description: string
+  price_monthly: number
+  icon: string
+}
+
+// Базовая цена
+const basePrice = 699
+
+// Реактивные переменные для выбора оборудования
+const selectedEquipment = ref<{ [key: string]: boolean }>({
+  router: false,
+  tv_box: false
+})
+
+// Дополнительное оборудование
+const additionalEquipment: Equipment[] = [
+  {
+    name: 'Wi-Fi роутер',
+    type: 'router',
+    description: 'SNR-CPE-ME2',
+    price_monthly: 99,
+    icon: 'heroicons:wifi'
+  },
+  {
+    name: 'ТВ-приставка',
+    type: 'tv_box',
+    description: 'Imaqliq G-Box',
+    price_monthly: 99,
+    icon: 'heroicons:tv'
+  }
+]
+
+// Вычисляем общую цену
+const totalPrice = computed(() => {
+  let total = basePrice
+  if (selectedEquipment.value.router) {
+    total += 99
+  }
+  if (selectedEquipment.value.tv_box) {
+    total += 99
+  }
+  return total
+})
+
+// Переключение выбора оборудования
+function toggleEquipment(type: string) {
+  selectedEquipment.value[type] = !selectedEquipment.value[type]
+}
+
 // Форма
 const form = reactive({
   lastName: '',
@@ -66,6 +118,11 @@ const submitForm = async () => {
           longitude: lon,
           components: form.address.components
         },
+        equipment: {
+          router: selectedEquipment.value.router,
+          tv_box: selectedEquipment.value.tv_box
+        },
+        totalPrice: totalPrice.value,
         source: 'website'
       }
     })
@@ -247,6 +304,48 @@ const resetForm = () => {
               </div>
             </div>
 
+            <!-- Additional Equipment -->
+            <div class="opacity-0 animate-fade-in-up stagger-3">
+              <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-4 text-center">Дополнительное оборудование</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div
+                  v-for="equipment in additionalEquipment"
+                  :key="equipment.type"
+                  @click="toggleEquipment(equipment.type)"
+                  class="glass-card rounded-xl cursor-pointer transition-all duration-200 border-2 h-full flex flex-col p-3 sm:p-4"
+                  :class="selectedEquipment[equipment.type] ? 'border-primary bg-primary/10' : 'border-transparent hover:border-white/20'"
+                >
+                  <div class="flex items-start gap-2 sm:gap-3">
+                    <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/10 flex items-center justify-center flex-shrink-0">
+                      <Icon :name="equipment.icon" class="w-4 h-4 text-primary" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between gap-2 mb-1 sm:mb-2">
+                        <h4 class="text-sm sm:text-base font-semibold text-[var(--text-primary)]">{{ equipment.name }}</h4>
+                        <span class="text-xs sm:text-sm font-bold text-primary whitespace-nowrap flex-shrink-0 ml-2">+{{ equipment.price_monthly }} ₽</span>
+                      </div>
+                      <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-tight mb-2 sm:mb-3">{{ equipment.description }}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between pt-2 sm:pt-3 mt-auto border-t border-white/10">
+                    <span class="text-[10px] sm:text-xs text-[var(--text-muted)] whitespace-nowrap">
+                      {{ selectedEquipment[equipment.type] ? 'Вкл' : 'Выкл' }}
+                    </span>
+                    <button
+                      @click.stop="toggleEquipment(equipment.type)"
+                      class="relative w-9 h-5 rounded-full transition-colors duration-200 flex-shrink-0 border border-white/20"
+                      :class="selectedEquipment[equipment.type] ? 'bg-primary border-primary' : 'bg-white/10'"
+                    >
+                      <span
+                        class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
+                        :class="selectedEquipment[equipment.type] ? 'translate-x-4' : 'translate-x-0'"
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Submit error -->
             <div
               v-if="submitError"
@@ -263,14 +362,25 @@ const resetForm = () => {
 
             <!-- Submit -->
             <div class="opacity-0 animate-fade-in-up stagger-5 relative z-10">
-              <button
-                type="submit"
-                :disabled="!isFormValid || isSubmitting"
-                class="w-full btn-primary flex items-center justify-center gap-3 py-5 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Icon v-if="isSubmitting" name="heroicons:arrow-path" class="w-5 h-5 animate-spin" />
-                <span>{{ isSubmitting ? 'Отправка...' : 'Отправить заявку' }}</span>
-              </button>
+              <div class="flex flex-row items-center gap-3 sm:gap-4">
+                <!-- Цена -->
+                <div class="flex items-center justify-center flex-shrink-0">
+                  <div class="inline-flex items-baseline gap-2">
+                    <span class="text-xl sm:text-3xl font-bold text-gradient-primary">{{ totalPrice }}</span>
+                    <span class="text-base sm:text-lg text-[var(--text-muted)]">₽/мес</span>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  :disabled="!isFormValid || isSubmitting"
+                  class="flex-1 btn-primary flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-5 text-sm sm:text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Icon v-if="isSubmitting" name="heroicons:arrow-path" class="w-5 h-5 animate-spin" />
+                  <span>{{ isSubmitting ? 'Отправка...' : 'Отправить заявку' }}</span>
+                </button>
+              </div>
+
               <!-- Legal -->
               <p class="text-xs text-[var(--text-muted)] text-center mt-3">
                 Нажимая кнопку, вы соглашаетесь с обработкой персональных данных
