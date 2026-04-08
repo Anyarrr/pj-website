@@ -121,23 +121,23 @@ function toggleEquipment(type: string) {
                 v-for="equipment in additionalEquipment"
                 :key="equipment.type"
                 @click="toggleEquipment(equipment.type)"
-                class="glass-card p-4 rounded-xl cursor-pointer transition-all duration-200 border-2 h-full flex flex-col"
+                class="glass-card rounded-xl cursor-pointer transition-all duration-200 border-2 h-full flex flex-col p-3 sm:p-4"
                 :class="selectedEquipment[equipment.type] ? 'border-primary bg-primary/10' : 'border-transparent hover:border-white/20'"
               >
-                <div class="flex items-start gap-3">
-                  <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/10 flex items-center justify-center flex-shrink-0">
+                <div class="flex items-start gap-2 sm:gap-3">
+                  <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/10 flex items-center justify-center flex-shrink-0">
                     <Icon :name="equipment.icon" class="w-4 h-4 text-primary" />
                   </div>
-                  <div class="flex-1">
-                    <div class="flex items-center justify-between gap-2 mb-2">
-                      <h4 class="text-base font-semibold text-[var(--text-primary)]">{{ equipment.name }}</h4>
-                      <span class="text-sm font-bold text-primary whitespace-nowrap flex-shrink-0 ml-2">+{{ equipment.price_monthly }} ₽</span>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2 mb-1 sm:mb-2">
+                      <h4 class="text-sm sm:text-base font-semibold text-[var(--text-primary)]">{{ equipment.name }}</h4>
+                      <span class="text-xs sm:text-sm font-bold text-primary whitespace-nowrap flex-shrink-0 ml-2">+{{ equipment.price_monthly }} ₽</span>
                     </div>
-                    <p class="text-sm text-[var(--text-muted)] leading-tight mb-3">{{ equipment.description }}</p>
+                    <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-tight mb-2 sm:mb-3">{{ equipment.description }}</p>
                   </div>
                 </div>
-                <div class="flex items-center justify-between pt-3 mt-auto border-t border-white/10">
-                  <span class="text-[10px] text-[var(--text-muted)] whitespace-nowrap">
+                <div class="flex items-center justify-between pt-2 sm:pt-3 mt-auto border-t border-white/10">
+                  <span class="text-[10px] sm:text-xs text-[var(--text-muted)] whitespace-nowrap">
                     {{ selectedEquipment[equipment.type] ? 'Вкл' : 'Выкл' }}
                   </span>
                   <button
