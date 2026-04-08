@@ -19,6 +19,9 @@ const channels = computed(() => {
 const totalChannels = computed(() => {
   return channels.value.reduce((sum, c) => sum + c.count, 0)
 })
+
+// Модальное окно со списком каналов
+const showChannelsModal = ref(false)
 </script>
 
 <template>
@@ -39,16 +42,16 @@ const totalChannels = computed(() => {
           <p class="text-xl text-[var(--text-muted)] mb-4 opacity-0 animate-fade-in-up stagger-2">
             <span class="text-5xl font-bold text-secondary">191</span> <span class="text-[var(--text-secondary)]">канал в HD и 4K качестве</span>
           </p>
-          <p class="text-[var(--text-muted)] mb-10 opacity-0 animate-fade-in-up stagger-2">
+          <p class="text-[var(--text-muted)] mb-8 opacity-0 animate-fade-in-up stagger-2">
             Включено в членский взнос без дополнительной платы
           </p>
-          <NuxtLink
-            to="/connect"
+          <button
+            @click="showChannelsModal = true"
             class="btn-primary inline-flex items-center gap-3 px-8 py-4 text-lg opacity-0 animate-fade-in-up stagger-3"
           >
-            <span>Подключиться</span>
+            <span>Посмотреть список каналов</span>
             <Icon name="heroicons:arrow-right" class="w-5 h-5" />
-          </NuxtLink>
+          </button>
         </div>
       </div>
     </section>
@@ -93,5 +96,8 @@ const totalChannels = computed(() => {
         </div>
       </div>
     </section>
+
+    <!-- Модальное окно со списком каналов -->
+    <TvChannelsModal v-model="showChannelsModal" />
   </div>
 </template>
