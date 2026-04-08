@@ -3,12 +3,10 @@ useHead({
   title: 'Подключиться — ПЖ19'
 })
 
-// Режим ввода адреса: 'input' или 'map'
-const addressMode = ref<'input' | 'map'>('input')
-
 // Форма
 const form = reactive({
-  fullName: '',
+  lastName: '',
+  firstName: '',
   phone: '',
   address: {
     text: '',
@@ -16,6 +14,13 @@ const form = reactive({
     components: null as Record<string, any> | null
   }
 })
+
+// Фильтр имени: только русские буквы/пробел/дефис, авто-капитализация
+const filterName = (value: string): string => {
+  let cleaned = value.replace(/[^а-яёА-ЯЁ\s-]/g, '')
+  cleaned = cleaned.toLowerCase().replace(/(^|[\s-])([а-яё])/g, (_, sep, char) => sep + char.toUpperCase())
+  return cleaned
+}
 
 // Состояния
 const phoneValid = ref(false)
@@ -27,7 +32,8 @@ const submitError = ref('')
 // Валидация формы
 const isFormValid = computed(() => {
   return (
-    form.fullName.trim().length >= 2 &&
+    form.lastName.trim().length >= 2 &&
+    form.firstName.trim().length >= 2 &&
     phoneValid.value &&
     form.address.coordinates !== null
   )
@@ -52,7 +58,7 @@ const submitForm = async () => {
     const response = await $fetch('/api/connection/create', {
       method: 'POST',
       body: {
-        fullName: form.fullName.trim(),
+        fullName: `${form.lastName.trim()} ${form.firstName.trim()}`,
         phone: form.phone,
         address: {
           text: form.address.text,
@@ -64,8 +70,9 @@ const submitForm = async () => {
       }
     })
 
-    // Успешная отправка
-    isSubmitted.value = true
+    // Успешная отправка — редирект на регистрацию
+    // isSubmitted.value = true
+    window.location.href = 'https://pg19client-dev.tagan.ru/login/register'
   } catch (e: any) {
     console.error('Submit error:', e)
     submitError.value = e.data?.message || e.message || 'Произошла ошибка при отправке заявки'
@@ -76,7 +83,8 @@ const submitForm = async () => {
 
 // Сброс формы для новой заявки
 const resetForm = () => {
-  form.fullName = ''
+  form.lastName = ''
+  form.firstName = ''
   form.phone = ''
   form.address = {
     text: '',
@@ -87,7 +95,6 @@ const resetForm = () => {
   coverageResult.value = null
   isSubmitted.value = false
   submitError.value = ''
-  addressMode.value = 'input'
 }
 </script>
 
@@ -109,27 +116,27 @@ const resetForm = () => {
           
           <!-- Как это работает -->
           <div class="opacity-0 animate-fade-in-up stagger-2">
-            <div class="grid md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-3 gap-4 md:gap-6 md:grid-cols-3">
               <div class="text-center">
-                <div class="w-12 h-12 glass-card rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <span class="text-xl font-bold text-primary">1</span>
+                <div class="w-10 h-10 glass-card rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <span class="text-lg font-bold text-primary">1</span>
                 </div>
-                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-sm md:text-base">Заявка</h3>
-                <p class="text-[var(--text-muted)] text-xs md:text-sm">Укажите ваш адрес и контактные данные</p>
+                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-xs sm:text-sm md:text-base">Заявка</h3>
+                <p class="text-[var(--text-muted)] text-[11px] leading-snug md:text-sm">Укажите ваш адрес и контактные данные</p>
               </div>
               <div class="text-center">
-                <div class="w-12 h-12 glass-card rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <span class="text-xl font-bold text-secondary">2</span>
+                <div class="w-10 h-10 glass-card rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <span class="text-lg font-bold text-secondary">2</span>
                 </div>
-                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-sm md:text-base">Проверка зоны</h3>
-                <p class="text-[var(--text-muted)] text-xs md:text-sm">Мы автоматически проверим возможность подключения</p>
+                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-xs sm:text-sm md:text-base">Проверка зоны</h3>
+                <p class="text-[var(--text-muted)] text-[11px] leading-snug md:text-sm">Мы автоматически проверим возможность подключения</p>
               </div>
               <div class="text-center">
-                <div class="w-12 h-12 glass-card rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <span class="text-xl font-bold text-accent">3</span>
+                <div class="w-10 h-10 glass-card rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <span class="text-lg font-bold text-accent">3</span>
                 </div>
-                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-sm md:text-base">Подключение</h3>
-                <p class="text-[var(--text-muted)] text-xs md:text-sm">Наш специалист приедет и настроит оборудование</p>
+                <h3 class="font-semibold text-[var(--text-primary)] mb-1 text-xs sm:text-sm md:text-base">Подключение</h3>
+                <p class="text-[var(--text-muted)] text-[11px] leading-snug md:text-sm">Наш специалист приедет и настроит оборудование</p>
               </div>
             </div>
           </div>
@@ -138,7 +145,7 @@ const resetForm = () => {
     </section>
 
     <!-- Form -->
-    <section class="py-20 md:py-32" :style="{ background: 'var(--bg-base)' }">
+    <section class="pt-2 pb-16 md:py-32" :style="{ background: 'var(--bg-base)' }">
       <div class="container mx-auto px-4">
         <div class="max-w-3xl mx-auto">
           <!-- Success message -->
@@ -168,15 +175,24 @@ const resetForm = () => {
           </div>
 
           <!-- Form -->
-          <form v-else @submit.prevent="submitForm" class="space-y-6">
-            <!-- Имя -->
-            <div class="opacity-0 animate-fade-in-up">
+          <form v-else @submit.prevent="submitForm" class="space-y-5 md:space-y-6">
+            <!-- Фамилия и Имя -->
+            <div class="opacity-0 animate-fade-in-up grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 md:pt-0">
               <UInput
-                v-model="form.fullName"
-                label="Как к вам обращаться?"
+                v-model="form.lastName"
+                label="Фамилия"
+                type="text"
+                required
+                placeholder="Иванов"
+                :filter="filterName"
+              />
+              <UInput
+                v-model="form.firstName"
+                label="Имя"
                 type="text"
                 required
                 placeholder="Иван"
+                :filter="filterName"
               />
             </div>
 
@@ -190,54 +206,12 @@ const resetForm = () => {
               />
             </div>
 
-            <!-- Переключатель режима адреса -->
-            <div class="opacity-0 animate-fade-in-up stagger-2">
-              <label class="block text-sm font-medium text-[var(--text-secondary)] mb-3">
-                Адрес подключения <span class="text-primary">*</span>
-              </label>
-              <div class="glass-card p-2 flex gap-2">
-                <button
-                  @click="addressMode = 'input'"
-                  type="button"
-                  :class="[
-                    'flex-1 px-4 py-3 rounded-lg font-medium transition-all',
-                    addressMode === 'input'
-                      ? 'bg-gradient-to-r from-primary to-secondary text-white'
-                      : 'text-[var(--text-secondary)] hover:bg-white/5'
-                  ]"
-                >
-                  <Icon name="heroicons:magnifying-glass" class="w-4 h-4 inline mr-2" />
-                  Ввести адрес
-                </button>
-                <button
-                  @click="addressMode = 'map'"
-                  type="button"
-                  :class="[
-                    'flex-1 px-4 py-3 rounded-lg font-medium transition-all',
-                    addressMode === 'map'
-                      ? 'bg-gradient-to-r from-primary to-secondary text-white'
-                      : 'text-[var(--text-secondary)] hover:bg-white/5'
-                  ]"
-                >
-                  <Icon name="heroicons:map" class="w-4 h-4 inline mr-2" />
-                  Выбрать на карте
-                </button>
-              </div>
-            </div>
-
-            <!-- Адрес: Input или Map -->
-            <div class="opacity-0 animate-fade-in-up stagger-3 relative z-50">
-              <ConnectionAddressInput
-                v-if="addressMode === 'input'"
+            <!-- Адрес подключения + Карта -->
+            <div class="opacity-0 animate-fade-in-up stagger-2 relative z-10">
+              <ConnectionAddressWithMap
                 v-model="form.address"
                 label="Адрес подключения"
                 required
-                @coverage-check="onCoverageCheck"
-              />
-              <ConnectionMapPicker
-                v-else
-                v-model="form.address"
-                :show-coverage-zone="true"
                 @coverage-check="onCoverageCheck"
               />
             </div>

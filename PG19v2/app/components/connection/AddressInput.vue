@@ -53,6 +53,8 @@ const borderColor = computed(() => {
 
 // Обработка ввода текста
 const handleInput = async () => {
+  // Убираем английские буквы из ввода
+  inputText.value = inputText.value.replace(/[a-zA-Z]/g, '')
   const query = inputText.value
 
   // Сбрасываем координаты при изменении текста

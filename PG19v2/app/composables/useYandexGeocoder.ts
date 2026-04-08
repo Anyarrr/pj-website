@@ -1,4 +1,7 @@
-import { VueYandexMaps, initYmaps } from 'vue-yandex-maps'
+/**
+ * Composable для обратного геокодирования
+ * Использует DaData geolocate API через серверный прокси /api/address/reverse
+ */
 
 export interface GeocoderResult {
   address: string
@@ -10,88 +13,7 @@ export interface GeocoderResult {
     region?: string
     country?: string
   }
-  precision: string // 'exact' | 'street' | 'other'
-}
-
-interface YmapsSearchResult {
-  geometry?: { coordinates?: [number, number] }
-  properties?: { name?: string; description?: string }
-}
-
-let initPromise: Promise<void> | null = null
-
-/**
- * Убедиться что Yandex Maps API загружен
- */
-async function ensureYmapsLoaded(): Promise<boolean> {
-  if (VueYandexMaps.isLoaded.value) {
-    return true
-  }
-
-  if (initPromise) {
-    await initPromise
-    return VueYandexMaps.isLoaded.value
-  }
-
-  try {
-    initPromise = initYmaps()
-    await initPromise
-    return VueYandexMaps.isLoaded.value
-  } catch (e) {
-    console.error('Failed to init Yandex Maps:', e)
-    return false
-  }
-}
-
-/**
- * Парсит компоненты адреса из результата Yandex Maps
- */
-function parseAddressComponents(properties: YmapsSearchResult['properties']): GeocoderResult['components'] {
-  const components: GeocoderResult['components'] = {}
-
-  if (properties?.description) {
-    const desc = properties.description
-    if (desc.includes('Ростов-на-Дону')) components.city = 'Ростов-на-Дону'
-    if (desc.includes('Ростовская область')) components.region = 'Ростовская область'
-    if (desc.includes('Россия')) components.country = 'Россия'
-  }
-
-  if (properties?.name) {
-    const nameParts = properties.name.split(',').map((s: string) => s.trim())
-    if (nameParts.length >= 2) {
-      components.street = nameParts[0]
-      components.house = nameParts[1]
-    } else {
-      components.street = properties.name
-    }
-  }
-
-  return components
-}
-
-/**
- * Форматирует полный адрес из результата Yandex Maps
- */
-function formatFullAddress(properties: YmapsSearchResult['properties']): string {
-  const name = properties?.name || ''
-  const description = properties?.description || ''
-  return `${name}, ${description}`.replace(/^, |, $/g, '')
-}
-
-/**
- * Создаёт GeocoderResult из результата поиска Yandex Maps
- */
-function createGeocoderResult(searchResult: YmapsSearchResult, fallbackCoords: [number, number]): GeocoderResult {
-  const coords = searchResult.geometry?.coordinates || fallbackCoords
-  const [lon, lat] = coords
-  const properties = searchResult.properties || {}
-
-  return {
-    address: formatFullAddress(properties),
-    coordinates: [lat, lon],
-    components: parseAddressComponents(properties),
-    precision: 'exact'
-  }
+  precision: string
 }
 
 export function useYandexGeocoder() {
@@ -100,40 +22,34 @@ export function useYandexGeocoder() {
   const error = ref<string | null>(null)
 
   /**
-   * Прямое геокодирование: адрес -> координаты
+   * Обратное геокодирование: координаты → адрес
    */
-  async function geocodeAddress(address: string): Promise<GeocoderResult> {
+  async function reverseGeocode(lat: number, lon: number): Promise<GeocoderResult> {
     isLoading.value = true
     error.value = null
 
     try {
-      const loaded = await ensureYmapsLoaded()
-      if (!loaded) {
-        throw new Error('Yandex Maps API not loaded')
-      }
-
-      const ymaps = VueYandexMaps.ymaps()
-      const searchResult = await ymaps.search({
-        text: address,
-        bounds: [[38.0, 46.5], [44.0, 50.5]] as unknown as [[number, number], [number, number]]
+      const data = await $fetch<{
+        address: string
+        coordinates: [number, number]
+        components: Record<string, any>
+      }>('/api/address/reverse', {
+        method: 'POST',
+        body: { lat, lon }
       })
 
-      if (!searchResult || searchResult.length === 0) {
-        throw new Error('Адрес не найден')
+      const geocodeResult: GeocoderResult = {
+        address: data.address,
+        coordinates: data.coordinates,
+        components: data.components,
+        precision: 'exact'
       }
 
-      const firstResult = searchResult[0]
-      if (!firstResult) {
-        throw new Error('Адрес не найден')
-      }
-
-      const geocodeResult = createGeocoderResult(firstResult, [0, 0])
       result.value = geocodeResult
       return geocodeResult
-    } catch (e: unknown) {
-      const err = e as Error
-      console.error('Geocoder error:', err)
-      error.value = err.message || 'Ошибка при геокодировании адреса'
+    } catch (e: any) {
+      console.error('Reverse geocode error:', e)
+      error.value = e.message || 'Ошибка геокодирования'
       throw e
     } finally {
       isLoading.value = false
@@ -141,39 +57,41 @@ export function useYandexGeocoder() {
   }
 
   /**
-   * Обратное геокодирование: координаты -> адрес
+   * Прямое геокодирование: адрес → координаты
+   * Использует DaData suggest и берёт первый результат
    */
-  async function reverseGeocode(lat: number, lon: number): Promise<GeocoderResult> {
+  async function geocodeAddress(address: string): Promise<GeocoderResult> {
     isLoading.value = true
     error.value = null
 
     try {
-      const loaded = await ensureYmapsLoaded()
-      if (!loaded) {
-        throw new Error('Yandex Maps API not loaded')
-      }
-
-      const ymaps = VueYandexMaps.ymaps()
-      const searchResult = await ymaps.search({
-        text: `${lon},${lat}`
+      const data = await $fetch<{ suggestions: any[] }>('/api/address/suggest', {
+        method: 'POST',
+        body: { query: address, count: 1 }
       })
 
-      if (!searchResult || searchResult.length === 0) {
-        throw new Error('Адрес не найден для указанных координат')
+      if (!data.suggestions?.length) {
+        throw new Error('Адрес не найден')
       }
 
-      const firstResult = searchResult[0]
-      if (!firstResult) {
-        throw new Error('Адрес не найден для указанных координат')
+      const s = data.suggestions[0]
+      const geocodeResult: GeocoderResult = {
+        address: s.value,
+        coordinates: s.coordinates || [0, 0],
+        components: {
+          city: s.city,
+          street: s.street,
+          house: s.house,
+          region: s.region
+        },
+        precision: 'exact'
       }
 
-      const geocodeResult = createGeocoderResult(firstResult, [lon, lat])
       result.value = geocodeResult
       return geocodeResult
-    } catch (e: unknown) {
-      const err = e as Error
-      console.error('Reverse geocoder error:', err)
-      error.value = err.message || 'Ошибка при обратном геокодировании'
+    } catch (e: any) {
+      console.error('Geocode error:', e)
+      error.value = e.message || 'Ошибка геокодирования'
       throw e
     } finally {
       isLoading.value = false
