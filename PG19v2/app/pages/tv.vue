@@ -42,13 +42,6 @@ const totalChannels = computed(() => {
           <p class="text-[var(--text-muted)] mb-10 opacity-0 animate-fade-in-up stagger-2">
             Включено в членский взнос без дополнительной платы
           </p>
-          <NuxtLink
-            to="/connect"
-            class="btn-primary inline-flex items-center gap-3 px-8 py-4 text-lg opacity-0 animate-fade-in-up stagger-3"
-          >
-            <span>Подключиться</span>
-            <Icon name="heroicons:arrow-right" class="w-5 h-5" />
-          </NuxtLink>
         </div>
       </div>
     </section>
