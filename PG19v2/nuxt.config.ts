@@ -45,7 +45,8 @@ export default defineNuxtConfig({
       supabaseKey: process.env.SUPABASE_KEY || '',
       telegramBotUsername: process.env.TELEGRAM_BOT_USERNAME || 'PG19CONNECTBOT',
       yandexMapsApiKey,
-      beelineCallNumber: '+7 960 459-69-45'
+      beelineCallNumber: '+7 960 459-69-45',
+      externalPaymentUrl: process.env.EXTERNAL_PAYMENT_URL || 'https://artelmik.ru/external-payment.html'
     }
   },
 

@@ -7,6 +7,7 @@ useHead({
 <template>
   <div>
     <HomeHeroSection />
+    <HomeTopUpSection />
     <HomeServicesGrid />
     <HomeWhyUsSection />
   </div>
